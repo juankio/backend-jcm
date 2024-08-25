@@ -1,17 +1,28 @@
 // controllers/appointmentController.js
 import Appointment from '../models/appointment.js';
+import Services from '../models/Service.js';
 import { parse, formatISO, startOfDay, endOfDay, isValid } from 'date-fns';
 import { valideObjetIdUser, handleNotFoundError, formatDate } from '../utils/index.js';
 import { sendEmailNewAppointment, sendEmailUpdateAppointment, sendEmailCancelAppointment } from '../emails/appointmentEmailService.js';
 
 const createAppointment = async (req, res) => {
-  const appointment = req.body;
-  appointment.user = req.user._id.toString();
-  try {
-    console.log(appointment);
-    const newAppointment = new Appointment(appointment);
+  const { services } = req.body;
 
-    const result = await newAppointment.save();
+  try {
+    
+    const serviceDetails = await Services.find({ _id: { $in: services } }).select('name price');
+
+    
+    const appointment = new Appointment({
+      ...req.body,
+      user: req.user._id.toString(), 
+      serviceDetails: serviceDetails.map(service => ({
+        name: service.name,
+        price: service.price
+      }))
+    });
+
+    const result = await appointment.save();
 
     await sendEmailNewAppointment({
       date: formatDate(result.date),
@@ -20,11 +31,13 @@ const createAppointment = async (req, res) => {
       userName: req.user.name,
       adminName: 'Admin'  
     });
+
     res.json({
       msg: 'Tu Reservacion se realizo correctamente'
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al crear la cita' });
   }
 };
 

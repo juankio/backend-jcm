@@ -7,21 +7,33 @@ const appointmentSchema = mongoose.Schema({
             ref:'Services'
         }
         ],
+    serviceDetails: [{
+        name: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        price: {
+            type: Number,
+            required: true,
+            trim: true
+        }
+    }],
     date:{
-        type:Date
+        type: Date
     },
     time:{
-        type:String
+        type: String
     },
     totalAmount:{
-        type:Number
+        type: Number
     },
     user: {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 
-const Appointment= mongoose.model('Appointment',appointmentSchema)
+const Appointment = mongoose.model('Appointment', appointmentSchema);
 
-export default Appointment
+export default Appointment;
