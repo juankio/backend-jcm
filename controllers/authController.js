@@ -70,28 +70,35 @@ const verifyAccount = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     const { email, password } = req.body;
 
-    // Verificar si el usuario existe
-    const user = await User.findOne({ email });
-    if (!user) {
-        const error = new Error('El usuario no existe');
-        return res.status(401).json({ msg: error.message });
+    if (!email || !password) {
+        const error = new Error('Todos los campos son obligatorios');
+        return res.status(400).json({ msg: error.message });
     }
 
-    if (!user.verified) {
-        const error = new Error('Tu cuenta no ha sido confirmada aún');
-        return res.status(401).json({ msg: error.message });
-    }
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            const error = new Error('El usuario no existe');
+            return res.status(401).json({ msg: error.message });
+        }
 
-    if (await user.checkPassword(password)) {
-        const token = generateJWT(user._id);
+        if (!user.verified) {
+            const error = new Error('Tu cuenta no ha sido confirmada aún');
+            return res.status(401).json({ msg: error.message });
+        }
 
-        res.json({ token });
-    } else {
-        const error = new Error('La contraseña es incorrecta');
-        return res.status(401).json({ msg: error.message });
+        if (await user.checkPassword(password)) {
+            const token = generateJWT(user._id);
+            res.json({ token });
+        } else {
+            const error = new Error('La contraseña es incorrecta');
+            return res.status(401).json({ msg: error.message });
+        }
+    } catch (error) {
+        next(error);
     }
 };
 
