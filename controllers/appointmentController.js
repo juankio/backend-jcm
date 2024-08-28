@@ -1,4 +1,3 @@
-// controllers/appointmentController.js
 import Appointment from '../models/appointment.js';
 import Services from '../models/Service.js';
 import { parse, formatISO, startOfDay, endOfDay, isValid } from 'date-fns';
@@ -9,10 +8,8 @@ const createAppointment = async (req, res) => {
   const { services } = req.body;
 
   try {
-    
     const serviceDetails = await Services.find({ _id: { $in: services } }).select('name price');
 
-    
     const appointment = new Appointment({
       ...req.body,
       user: req.user._id.toString(), 
@@ -33,7 +30,7 @@ const createAppointment = async (req, res) => {
     });
 
     res.json({
-      msg: 'Tu Reservacion se realizo correctamente'
+      msg: 'Tu reservación se realizó correctamente'
     });
   } catch (error) {
     console.log(error);
@@ -47,7 +44,7 @@ const getAppointmentsByDate = async (req, res) => {
   const newDate = parse(date, 'dd/MM/yyyy', new Date());
 
   if (!isValid(newDate)) {
-    const error = new Error('Fecha no valida');
+    const error = new Error('Fecha no válida');
     return res.status(400).json({ msg: error.message });
   }
   const isoDate = formatISO(newDate);
@@ -67,7 +64,7 @@ const getAppointmentById = async (req, res) => {
 
   const appointment = await Appointment.findById(id).populate('services');
   if (!appointment) {
-    return handleNotFoundError('La cita no Existe', res);
+    return handleNotFoundError('La cita no existe', res);
   }
   if (appointment.user.toString() !== req.user._id.toString()) {
     const error = new Error('No tienes los permisos');
@@ -84,7 +81,7 @@ const updateAppointment = async (req, res) => {
 
   const appointment = await Appointment.findById(id).populate('services');
   if (!appointment) {
-    return handleNotFoundError('La cita no Existe', res);
+    return handleNotFoundError('La cita no existe', res);
   }
   if (appointment.user.toString() !== req.user._id.toString()) {
     const error = new Error('No tienes los permisos');
@@ -106,7 +103,7 @@ const updateAppointment = async (req, res) => {
       adminName: 'Admin'  
     });
     res.json({
-      msg: 'Cita Actualizada Correctamente'
+      msg: 'Cita actualizada correctamente'
     });
   } catch (error) {
     console.log(error);
@@ -120,7 +117,7 @@ const deleteAppointment = async (req, res) => {
   const appointment = await Appointment.findById(id).populate('services');
 
   if (!appointment) {
-    return handleNotFoundError('La Cita no existe', res);
+    return handleNotFoundError('La cita no existe', res);
   }
 
   if (appointment.user.toString() !== req.user._id.toString()) {
@@ -138,7 +135,7 @@ const deleteAppointment = async (req, res) => {
     });
     await appointment.deleteOne();
 
-    res.json({ msg: 'Cita Cancelada Exitosamente' });
+    res.json({ msg: 'Cita cancelada exitosamente' });
   } catch (error) {
     console.log(error);
   }

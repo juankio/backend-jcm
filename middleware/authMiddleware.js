@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-const autMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       const token = req.headers.authorization.split(' ')[1];
@@ -9,13 +9,11 @@ const autMiddleware = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select("-password -verified -token -__v");
       next();
     } catch (error) {
-      const err = new Error('Token no valido');
-      res.status(403).json({ msg: err.message });
+      next(new Error('Token no válido'));
     }
   } else {
-    const error = new Error('Token no valido o inecistente');
-    res.status(403).json({ msg: error.message });
+    next(new Error('Token no válido o inexistente'));
   }
 };
 
-export default autMiddleware;
+export default authMiddleware;

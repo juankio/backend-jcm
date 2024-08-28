@@ -1,27 +1,28 @@
-// controllers/servicesController.js
 import Services from '../models/Service.js';
 import { handleNotFoundError } from '../utils/index.js';
 
-const createServis = async (req, res) => {
+const createService = async (req, res) => {
   if (Object.values(req.body).includes('')) {
     const error = new Error('Todos los campos son obligatorios');
     return res.status(400).json({ msg: error.message });
   }
   try {
-    const services = new Services(req.body);
-    await services.save();
+    const service = new Services(req.body);
+    await service.save();
     res.json({ msg: "El servicio se creó correctamente" });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al crear el servicio' });
   }
 };
 
 const getServices = async (req, res) => {
   try {
-    const service = await Services.find();
-    res.json(service);
+    const services = await Services.find();
+    res.json(services);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al obtener los servicios' });
   }
 };
 
@@ -42,7 +43,8 @@ const updateService = async (req, res) => {
   if (!service) {
     return handleNotFoundError('El servicio no existe', res);
   }
-  // Escribir los nuevos valores
+  
+  // Actualizar los valores
   service.name = req.body.name || service.name;
   service.price = req.body.price || service.price;
 
@@ -51,6 +53,7 @@ const updateService = async (req, res) => {
     res.json({ msg: 'El servicio se actualizó correctamente' });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al actualizar el servicio' });
   }
 };
 
@@ -66,12 +69,13 @@ const deleteService = async (req, res) => {
     res.json({ msg: 'El servicio se eliminó correctamente' });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al eliminar el servicio' });
   }
 };
 
 export {
   getServices,
-  createServis,
+  createService,
   getServiceById,
   updateService,
   deleteService
