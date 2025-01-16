@@ -12,6 +12,6 @@ router.route('/')
 router.route('/:id')
   .get(valideObjetIdUser, getServiceById)
   .put(valideObjetIdAdmin, updateService)
-  .delete(valideObjetIdUser, deleteService);
+   .delete(deleteService);
 
 export default router;

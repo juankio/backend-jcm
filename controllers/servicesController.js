@@ -64,16 +64,18 @@ const deleteService = async (req, res) => {
 
   const service = await Services.findById(id);
   if (!service) {
-    return handleNotFoundError('El servicio no existe', res);
+    return res.status(404).json({ msg: 'El servicio no existe' });
   }
+
   try {
     await service.deleteOne();
-    res.json({ msg: 'El servicio se eliminó correctamente' });
+    res.json({ msg: 'Servicio eliminado correctamente' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: 'Error al eliminar el servicio' });
   }
 };
+
 
 export {
   getServices,
