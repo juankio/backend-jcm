@@ -43,10 +43,11 @@ const updateService = async (req, res) => {
   if (!service) {
     return handleNotFoundError('El servicio no existe', res);
   }
-  
+
   // Actualizar los valores
   service.name = req.body.name || service.name;
   service.price = req.body.price || service.price;
+  service.description = req.body.description || service.description; // Nuevo campo
 
   try {
     await service.save();
@@ -56,6 +57,7 @@ const updateService = async (req, res) => {
     res.status(500).json({ msg: 'Error al actualizar el servicio' });
   }
 };
+
 
 const deleteService = async (req, res) => {
   const { id } = req.params;
