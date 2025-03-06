@@ -12,19 +12,25 @@ cloudinary.config({
 });
 
 const createService = async (req, res) => {
+  console.log("Datos recibidos en el backend:", req.body); // 👀 Verifica qué está llegando
+
   if (Object.values(req.body).includes('')) {
     const error = new Error('Todos los campos son obligatorios');
     return res.status(400).json({ msg: error.message });
   }
+
   try {
     const service = new Services(req.body);
     await service.save();
-    res.json({ msg: "El servicio se creó correctamente" });
+    res.status(201).json({ msg: "Servicio creado correctamente", _id: service._id });
+    
+    
   } catch (error) {
-    console.log(error);
+    console.error("Error en createService:", error);
     res.status(500).json({ msg: 'Error al crear el servicio' });
   }
 };
+
 
 const getServices = async (req, res) => {
   try {
@@ -89,32 +95,43 @@ const deleteService = async (req, res) => {
 const uploadServiceImage = async (req, res) => {
   const { id } = req.params;
 
+  console.log("📤 Subiendo imagen para el servicio:", id);
+  console.log("📦 req.file:", req.file); // 🔥 Debug para ver si `req.file` está presente
+
   const service = await Services.findById(id);
   if (!service) {
-    return handleNotFoundError('El servicio no existe', res);
+    return res.status(404).json({ msg: "El servicio no existe" });
   }
 
   try {
     if (!req.file) {
-      return res.status(400).json({ msg: 'No se envió ninguna imagen' });
+      return res.status(400).json({ msg: "No se envió ninguna imagen" });
     }
 
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: `services/${id}`,
-    });
+    // 🔥 Subir desde buffer en vez de req.file.path
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: `services/${id}` },
+      async (error, uploadResult) => {
+        if (error) {
+          console.error("❌ Error al subir imagen a Cloudinary:", error);
+          return res.status(500).json({ msg: "Error al subir la imagen", error: error.message });
+        }
 
-    service.images.push(result.secure_url);
-    await service.save();
+        service.images.push(uploadResult.secure_url);
+        await service.save();
 
-    res.json({
-      msg: 'Imagen subida correctamente',
-      imageUrl: result.secure_url,
-    });
+        res.json({ msg: "Imagen subida correctamente", imageUrl: uploadResult.secure_url });
+      }
+    );
+
+    uploadStream.end(req.file.buffer); // 📤 Subir desde memoria
+
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: 'Error al subir la imagen' });
+    console.error("❌ Error general en la subida:", error);
+    res.status(500).json({ msg: "Error al subir la imagen", error: error.message });
   }
 };
+
 
 // Obtener imágenes de un servicio
 const getServiceImages = async (req, res) => {
