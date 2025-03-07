@@ -87,11 +87,20 @@ const updateAppointment = async (req, res) => {
     const error = new Error('No tienes los permisos');
     return res.status(403).json({ msg: error.message });
   }
+
   const { date, time, totalAmount, services } = req.body;
   appointment.date = date;
   appointment.time = time;
   appointment.totalAmount = totalAmount;
   appointment.services = services;
+
+  // Actualizar `serviceDetails` con los datos correctos
+  const serviceDetails = await Services.find({ _id: { $in: services } }).select('name price');
+  appointment.serviceDetails = serviceDetails.map(service => ({
+    name: service.name,
+    price: service.price
+  }));
+
   try {
     const result = await appointment.save();
 
@@ -100,15 +109,18 @@ const updateAppointment = async (req, res) => {
       time: result.time,
       userEmail: req.user.email,
       userName: req.user.name,
-      adminName: 'Admin'  
+      adminName: 'Admin'
     });
+
     res.json({
       msg: 'Cita actualizada correctamente'
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ msg: 'Error al actualizar la cita' });
   }
 };
+
 
 const deleteAppointment = async (req, res) => {
   const { id } = req.params;
