@@ -7,7 +7,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 export async function sendEmailVerification({ name, email, token }) {
     const msg = {
       to: email,
-      from: 'JCMFotosyVideos<jcmfotosyvideos2012@gmail.com>',
+      from: 'JCMFotosyVideos<juanmiguelruizsupe@gmail.com>',
       subject: 'JCM Fotos y Videos - Confirma tu cuenta',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc; border-radius: 10px;">
@@ -46,7 +46,7 @@ export async function sendEmailVerification({ name, email, token }) {
   export async function sendEmailResetPassword({ name, email, token }) {
     const msg = {
       to: email,
-      from: 'JCMFotosyVideos<jcmfotosyvideos2012@gmail.com>',
+      from: 'JCMFotosyVideos<juanmiguelruizsupe@gmail.com>',
       subject: 'JCM Fotos y Videos - Reestablece tu contraseña',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc; border-radius: 10px;">

@@ -9,13 +9,13 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 export async function sendEmailNewAppointment({ date, time, userEmail, userName, adminName }) {
     const emails = [
         { email: userEmail, name: userName },
-        { email: 'jcmfotosyvideos2012@gmail.com', name: adminName }
+        { email: 'juanmiguelruizsupe@gmail.com', name: adminName }
     ];
 
     for (const recipient of emails) {
         const msg = {
           to: recipient.email,
-          from: 'JCMFotosyVideos<jcmfotosyvideos2012@gmail.com>',
+          from: 'JCMFotosyVideos<juanmiguelruizsupe@gmail.com>',
           subject: 'JCM Fotos y Videos - Nueva Cita',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc; border-radius: 10px;">
@@ -48,7 +48,7 @@ export async function sendEmailNewAppointment({ date, time, userEmail, userName,
 export async function sendEmailUpdateAppointment({ date, time, userEmail, userName, adminName }) {
     const emails = [
         { email: userEmail, name: userName },
-        { email: 'jcmfotosyvideos2012@gmail.com', name: adminName }
+        { email: 'juanmiguelruizsupe@gmail.com', name: adminName }
     ];
 
     for (const recipient of emails) {
@@ -86,14 +86,14 @@ export async function sendEmailUpdateAppointment({ date, time, userEmail, userNa
 
 export async function sendEmailCancelAppointment({ date, time, userEmail, userName, adminName }) {
     const emails = [
-        { email: userEmail, name: userName },
-        { email: 'jcmfotosyvideos2012@gmail.com', name: adminName }
+      { email: 'juanmiguelruizsupe@gmail.com', name: adminName },
+        { email: userEmail, name: userName }
     ];
 
     for (const recipient of emails) {
         const msg = {
           to: recipient.email,
-          from: 'JCMFotosyVideos<jcmfotosyvideos2012@gmail.com>',
+          from: 'JCMFotosyVideos<juanmiguelruizsupe@gmail.com>',
           subject: 'JCM Fotos y Videos - Cita Cancelada',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc; border-radius: 10px;">
